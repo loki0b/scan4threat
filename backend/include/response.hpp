@@ -7,8 +7,9 @@ class Response {
 private:
     std::string response;
 public:
-    Response();
+    Response(std::string data);
     ~Response();
+    std::string getMessage() const;
 };
 
 #endif
