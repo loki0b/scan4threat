@@ -1,5 +1,5 @@
 import express from "express";
-import router from "../routes/root";
+import myKey from "../routes/api";
 import scanRouter from "../routes/scan";
 import cors from "cors";
 
@@ -9,7 +9,7 @@ const host = process.env.HOST;
 
 app.use(cors());
 app.use(express.json());
-app.use("/api", router);
+app.use("/api", myKey);
 app.use("/", scanRouter);
 
 app.listen(port, () => {
