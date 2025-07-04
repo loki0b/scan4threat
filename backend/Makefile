@@ -1,4 +1,4 @@
-SRC=$(wildcard src/*.cpp)
+SRC=$(wildcard wip/*.cpp)
 
 all:
 	g++ -Iinclude $(SRC) -lcurl -o bin/api_handler
