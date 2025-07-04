@@ -146,13 +146,13 @@ function Home() {
                 <div className='flex flex-col justify-center items-center'>
                   <File size={65}/>
                   <input ref={hiddenFileInput} onChange={handleChange} type="file" className='hidden'/>
-                  <p className='font-medium w-24 truncate'>{myFileName}</p>
+                  <p className='text-center font-medium w-24 truncate'>{myFileName}</p>
                 </div>
                 :
                 <div className='flex flex-col justify-center items-center'>
                   <File size={65}/>
                   <input ref={hiddenFileInput} onChange={handleChange} type="file" className='hidden'/>
-                  <p className='font-medium w-19 truncate'>Select File</p>
+                  <p className='font-medium w-19 truncate text-center'>Select File</p>
                 </div>
               }
             </div>
