@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "scripts": {
-    "start": "tsx --env-file=.env --watch  app/server.ts"
+    "dev": "tsx --env-file=.dev.env --watch  app/server.ts"
   },
   "type": "module",
   "keywords": [],
