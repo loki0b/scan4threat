@@ -2,10 +2,12 @@
 
 using std::string;
 
-RequestPost::RequestPost(string url, string body) : Request(url), body(body) {
+RequestPost::RequestPost(string url, string body, string apiKey) : Request(url, apiKey), body(body) {
+    string key = "x-apikey: " + apiKey;
+    
     this->headers = nullptr;
     this->headers = curl_slist_append(headers, "accept: application/json");
-    this->headers = curl_slist_append(headers, "x-apikey: e1b7b92e4a808ed5627dac50b1fc2aa4f003950b4da1c68ad98b158514ff4ebb");
+    this->headers = curl_slist_append(headers, key.c_str());
     this->headers = curl_slist_append(headers, "content-type: application/x-www-form-urlencoded");
 };
 
