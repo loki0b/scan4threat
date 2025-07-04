@@ -10,7 +10,7 @@ private:
     std::string body;
     struct curl_slist *headers;
 public:
-    RequestPost(std::string url, std::string body);
+    RequestPost(std::string url, std::string body, std::string apiKey);
     ~RequestPost();
     Response request() override;
 };
