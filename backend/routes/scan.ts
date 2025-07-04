@@ -7,8 +7,8 @@ scanRouter.post("/scanUrl", (req: Request, res: Response) => {
     const data: string = req.body;
     const url: string = data["url"];
     
-    const apiResponse = 
+    const apiResponse: string = execApiHandler(url);
     res.send(
-        execApiHandler(url)
+        JSON.stringify(apiResponse)
     )
 })
