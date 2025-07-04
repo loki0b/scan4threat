@@ -3,12 +3,15 @@ import { execApiHandler } from "../app/apiHandlerCpp";
 
 const scanRouter = Router();
 
-scanRouter.post("/scanUrl", (req: Request, res: Response) => {
-    const data: string = req.body;
-    const url: string = data["url"];
+scanRouter.post("/", (req: Request, res: Response) => {
+    const urlLink: string = req.body.urlLink;
+
+    console.log("ping", urlLink);
     
-    const apiResponse = 
+    const apiResponse: string = execApiHandler(urlLink);
     res.send(
-        execApiHandler(url)
+        JSON.stringify(apiResponse)
     )
 })
+
+export default scanRouter;
