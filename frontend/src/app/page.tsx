@@ -47,13 +47,16 @@ function Home() {
   if (typeof myFile === 'string') {
     try {
 
-    const formData = new FormData()
-    formData.append('methodUsed', 'POST')
-    formData.append('link', myFile)
+    const url = {
+      urlLink: myFile,
+    }
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/scanUrl`, {
       method: 'POST',
-      body: formData,
+      headers: {
+      "Content-Type": "application/json",  // 👈 Tell the server you're sending JSON
+      },
+      body: JSON.stringify(url),
     })
 
     const result = await response.json()
