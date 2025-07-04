@@ -2,8 +2,9 @@
 
 using std::string;
 
-Request::Request(string url) {
+Request::Request(string url, string apiKey) {
     this->url = url;
+    this->apiKey = apiKey;
     this->handle = curl_easy_init();
 }
 
@@ -34,3 +35,7 @@ Response Request::request() {
     Response a("a");
     return a;
 };
+
+string Request::getApikey() const {
+    return apiKey;
+}
