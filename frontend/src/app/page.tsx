@@ -5,8 +5,10 @@ import Image from 'next/image'
 import Logo from '@/assets/scan4threat.png'
 import { File, Search } from 'lucide-react'
 import LoadingBar from '@/components/LoadingBar'
+import { ApiKeyStore } from '@/stores/ApiKeyStore'
 
 function Home() {
+  const {apikey, updateApiKey} = ApiKeyStore()
   const myButtons = [
     {id: 1, title: "File"},
     {id: 2, title: "Url"}
@@ -15,6 +17,9 @@ function Home() {
   const [myFileName, setMyFileName] = useState<undefined | string>(undefined)
   const [myFile, setMyFile] = useState<File | null | string>(null)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMyFile(null)
+    setMyFileName(undefined)
+
     const fileUploaded = e.target.files
     if (fileUploaded && fileUploaded.length === 1){
       const file = fileUploaded[0]
@@ -23,11 +28,15 @@ function Home() {
     }
   }
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMyFile(null)
     setMyFileName(undefined)
+    
     const myUrl = e.target.value
     if (myUrl.trim().length > 0) {
       setMyFile(myUrl)
-    } 
+    } else {
+      setMyFile(null)
+    }
   }
   const hiddenFileInput = useRef<HTMLInputElement>(null)
   const handleClickInput = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => (
@@ -43,12 +52,13 @@ function Home() {
 
   setLoading(true)
   setShowLoadingBar(true)
-
   const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) // 4 seconds
 
 
   if (typeof myFile === 'string') {
     try {
+    setResponseMsg('')
+    setError(null)
 
     const url = {
       urlLink: myFile,
@@ -103,11 +113,31 @@ function Home() {
     setClickedButton(bttn)
     setMyFile(null)
     setMyFileName(undefined)
+    setMissingAPI(false)
   }
   const [showLoadingBar, setShowLoadingBar] = useState(true)
   const handleLoadingBarComplete = () => {
     setShowLoadingBar(false)
   }
+  const [missingAPI, setMissingAPI] = useState<boolean>(false)
+  const handleMissingAPI = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (clickedButton === 1) {
+    handleChange(e)
+  } else {
+    handleInput(e)
+  }
+  }
+  useEffect(() => {
+    if (!apikey) {
+      setMissingAPI(true);
+      setMyFile(null);
+      setMyFileName(undefined);
+      setResponseMsg('');
+      setError(null);
+    } else {
+      setMissingAPI(false);
+    }
+  }, [apikey])
   return (
     <div>
       <TopBar/>
@@ -143,30 +173,41 @@ function Home() {
             <div onClick={handleClickInput} className='flex flex-col justify-center items-center h-32 w-32 rounded-lg border-4 border-lime-600 text-lime-600 hover:bg-lime-600 hover:text-neutral-900'>
               {
                 myFile ?
+                
                 <div className='flex flex-col justify-center items-center'>
                   <File size={65}/>
-                  <input ref={hiddenFileInput} onChange={handleChange} type="file" className='hidden'/>
+                  <input ref={hiddenFileInput} onChange={handleMissingAPI} type="file" className='hidden'/>
                   <p className='text-center font-medium w-24 truncate'>{myFileName}</p>
                 </div>
+                
                 :
+                
                 <div className='flex flex-col justify-center items-center'>
                   <File size={65}/>
-                  <input ref={hiddenFileInput} onChange={handleChange} type="file" className='hidden'/>
+                  <input ref={hiddenFileInput} onChange={handleMissingAPI} type="file" className='hidden'/>
                   <p className='font-medium w-19 truncate text-center'>Select File</p>
                 </div>
+                
               }
             </div>
             </>
             :
             <div>
-              <input onChange={handleInput} type="text" className='w-130 px-2 rounded-md h-8 bg-neutral-950 text-neutral-300' placeholder='Url'/>
+              <input value={typeof myFile === 'string' ? myFile : ''} onChange={handleMissingAPI} type="text" className='w-130 px-2 rounded-md h-8 bg-neutral-950 text-neutral-300' placeholder='Url'/>
             </div>
           }
+          {
+            missingAPI && (
+              <div className='my-1 h-6 w-96 text-center rounded-md text-lime-600/70 text-md'>
+                <p>You must input your API Key in order to scan it.</p>
+              </div>
+            )
+          }
         <button
-          disabled={!myFile || (typeof myFile === 'string' && myFile.trim().length === 0)}
+          disabled={!myFile || (typeof myFile === 'string' && myFile.trim().length === 0) || missingAPI}
           onClick={handleScan}
-          className={`mt-2 h-8 w-32 rounded-md ${
-            !myFile || (typeof myFile === 'string' && myFile.trim().length === 0)
+          className={`mt-1 h-8 w-32 rounded-md ${
+            !myFile || (typeof myFile === 'string' && myFile.trim().length === 0) || missingAPI
               ? 'bg-neutral-800 text-lime-500 cursor-not-allowed'
               : 'bg-lime-600 text-neutral-800 hover:bg-lime-500'
           }`}
