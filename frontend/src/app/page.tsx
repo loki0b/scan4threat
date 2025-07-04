@@ -35,18 +35,15 @@ function Home() {
     hiddenFileInput.current?.click()
   )
   const [loading, setLoading] = useState(false)
-  const [isEmpty, setIsEmpty] = useState(true)
   const [responseMsg, setResponseMsg] = useState<string>('')
   const [error, setError] = useState<unknown | Error>(null)
   const handleScan = async () => {
   if (!myFile) {
-    setIsEmpty(true)
     setIsTriggered(true)
     setLoading(false)
     return
   }
 
-  setIsEmpty(false)
   setLoading(true)
 
   if (typeof myFile === 'string') {
