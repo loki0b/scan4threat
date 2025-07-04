@@ -56,7 +56,7 @@ function Home() {
       urlLink: myFile,
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/scanUrl`, {
+    const response = await fetch(`http://localhost:8000/scanUrl`, {
       method: 'POST',
       headers: {
       "Content-Type": "application/json", 
