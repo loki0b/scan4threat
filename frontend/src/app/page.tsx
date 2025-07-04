@@ -4,7 +4,6 @@ import TopBar from '@/components/TopBar'
 import Image from 'next/image'
 import Logo from '@/assets/scan4threat.png'
 import { File, Search } from 'lucide-react'
-import InputField from '@/components/InputField'
 import LoadingBar from '@/components/LoadingBar'
 
 function Home() {
@@ -26,9 +25,9 @@ function Home() {
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMyFileName(undefined)
     const myUrl = e.target.value
-    if (myUrl) {
+    if (myUrl.trim().length > 0) {
       setMyFile(myUrl)
-    }
+    } 
   }
   const hiddenFileInput = useRef<HTMLInputElement>(null)
   const handleClickInput = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => (
@@ -39,12 +38,14 @@ function Home() {
   const [error, setError] = useState<unknown | Error>(null)
   const handleScan = async () => {
   if (!myFile) {
-    setIsTriggered(true)
-    setLoading(false)
     return
   }
 
   setLoading(true)
+  setShowLoadingBar(true)
+
+  const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) // 4 seconds
+
 
   if (typeof myFile === 'string') {
     try {
@@ -62,6 +63,7 @@ function Home() {
     })
     const result = await response.json()
     setResponseMsg(result.message)
+    await minimumLoadingTime
   } catch (error: unknown) {
     if (error instanceof Error) {
       setError(error.message)
@@ -70,18 +72,42 @@ function Home() {
     }
   } finally {
     setLoading(false)
+    setShowLoadingBar(false)
   }
-  } 
+  } else {
+      try {
+
+      const formData = new FormData()
+      formData.append('myFile', myFile)
+
+      const response = await fetch(`http://localhost:8000/scanFile`, {
+        method: 'POST',
+        body: formData,
+      })
+      const result = await response.json()
+      setResponseMsg(result.message)
+      await minimumLoadingTime
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unknown error occurred')
+      }
+    } finally {
+      setLoading(false)
+      setShowLoadingBar(false)
+    }
+  }
 }
   const handleClick = (bttn: number) => {
     setClickedButton(bttn)
     setMyFile(null)
     setMyFileName(undefined)
-    setIsTriggered(false)
   }
-  
-
-  const [isTriggered, setIsTriggered] = useState(false)
+  const [showLoadingBar, setShowLoadingBar] = useState(true)
+  const handleLoadingBarComplete = () => {
+    setShowLoadingBar(false)
+  }
   return (
     <div>
       <TopBar/>
@@ -98,8 +124,17 @@ function Home() {
           }
         </div>
         {
-          loading ?
-          <LoadingBar/>
+          loading ? (
+          <div className='flex flex-col justify-center items-center mt-4 bg-neutral-900 w-170 h-56 rounded-lg'>
+            <LoadingBar
+            start={true}
+            onComplete={() => {
+              setLoading(false)
+              setShowLoadingBar(false)
+            }}
+          />
+          </div>
+          )
           :
             <div className='flex flex-col justify-center items-center mt-4 bg-neutral-900 w-170 h-56 rounded-lg'>
           {
@@ -121,19 +156,23 @@ function Home() {
                 </div>
               }
             </div>
-            {
-            isTriggered && 
-            <div className='mt-2 flex justify-center h-6 w-85 rounded-md bg-lime-600/60'>
-              <p className='text-md text-neutral-900'>You must choose a file in order to scan it.</p>
-            </div>
-            }
             </>
             :
             <div>
               <input onChange={handleInput} type="text" className='w-130 px-2 rounded-md h-8 bg-neutral-950 text-neutral-300' placeholder='Url'/>
             </div>
           }
-        <button onClick={handleScan} className='mt-2 h-8 w-32 rounded-md active:bg-lime-500 active:text-neutral-800 bg-lime-600 text-neutral-800'>Scan</button>
+        <button
+          disabled={!myFile || (typeof myFile === 'string' && myFile.trim().length === 0)}
+          onClick={handleScan}
+          className={`mt-2 h-8 w-32 rounded-md ${
+            !myFile || (typeof myFile === 'string' && myFile.trim().length === 0)
+              ? 'bg-neutral-800 text-lime-500 cursor-not-allowed'
+              : 'bg-lime-600 text-neutral-800 hover:bg-lime-500'
+          }`}
+        >
+          Scan
+        </button>
         </div>
         }
         <span className='text-sm text-lime-950 mt-16'>
