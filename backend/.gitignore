@@ -1,0 +1,6 @@
+node_modules/
+bin/
+.env
+.dev.env
+compile_commands.json
+.cache
