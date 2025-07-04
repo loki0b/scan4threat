@@ -17,7 +17,7 @@ function Home() {
     setClickedButton(bttn)
   )
   const [myFileName, setMyFileName] = useState<undefined | string>(undefined)
-  const [myFile, setMyFile] = useState<File | null>(null)
+  const [myFile, setMyFile] = useState<File | null | string>(null)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileUploaded = e.target.files
     if (fileUploaded && fileUploaded.length === 1){
@@ -44,15 +44,19 @@ function Home() {
   setIsEmpty(false)
   setLoading(true)
 
-  try {
+  if (typeof myFile === 'string') {
+    try {
 
-    const formData = new FormData()
-    formData.append('methodUsed', 'POST')
-    formData.append('content', myFile)
+    const url = {
+      urlLink: myFile,
+    }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/scan`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/scanUrl`, {
       method: 'POST',
-      body: formData,
+      headers: {
+      "Content-Type": "application/json",  // 👈 Tell the server you're sending JSON
+      },
+      body: JSON.stringify(url),
     })
 
     const result = await response.json()
@@ -66,6 +70,7 @@ function Home() {
   } finally {
     setLoading(false)
   }
+  } 
 }
 
   const [isTriggered, setIsTriggered] = useState(false)
@@ -126,7 +131,7 @@ function Home() {
             </>
             :
             <div>
-              <input type="text" className='w-130 px-2 rounded-md h-8 bg-neutral-950 text-neutral-300' placeholder='Url'/>
+              <input ref={hiddenFileInput} onChange={handleChange} type="text" className='w-130 px-2 rounded-md h-8 bg-neutral-950 text-neutral-300' placeholder='Url'/>
             </div>
           }
         <button onClick={handleTriggering} className='mt-2 h-8 w-32 rounded-md active:bg-lime-500 active:text-neutral-800 bg-lime-600 text-neutral-800'>Scan</button>
