@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
 type ApiStore = {
-    apikey: string;
-    updateApiKey: (myKey: string) => void;
+    apikey: string | null;
+    updateApiKey: (myKey: string | null) => void;
 }
 
 export const ApiKeyStore = create<ApiStore>((set) => ({
     apikey: '',
-    updateApiKey: (key: string) => set(() => ({apikey: key}))
+    updateApiKey: (key: string | null) => set(() => ({apikey: key}))
 }))
