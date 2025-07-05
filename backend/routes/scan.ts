@@ -1,6 +1,8 @@
 import { Request, Response, Router } from "express";
 import { execApiHandler } from "../app/apiHandlerCpp";
 
+// TODO:
+// implement scanFile route
 
 const scanRouter = Router();
 
