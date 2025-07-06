@@ -8,15 +8,16 @@
 class Request {
 private:
     CURL* handle;
-    std::string apiKey;
+    struct curl_slist* headers;
 protected:
     static size_t writeData(void* buffer, size_t size, size_t nmemb, void* userdata);
 public:
-    Request(std::string apiKey);
+    Request();
     virtual ~Request();
-    virtual Response request();
+    virtual Response init();
     CURL* getHandle() const;
-    std::string getApikey() const;
+    struct curl_slist* getHeader() const; 
+    void setHeader(std::string header);
 };
 
 #endif
