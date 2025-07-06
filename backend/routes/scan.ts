@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { execApiHandler } from "../app/apiHandlerCpp";
+import { apiScanUrl } from "../app/apiHandlerCpp";
 
 const URL = "url";
 const FILE = "file";
@@ -11,21 +11,21 @@ scanRouter.post("/", async (request: Request, response: Response) => {
     const payloadType = payload.type;
     
     if (payloadType === URL) {
-        console.log("ok");
         const url: string = payload.urlLink;
-        const apiResponse: string = await execApiHandler(url);
+        const apiResponse: string = await apiScanUrl(url);
         
         response.send(
             JSON.stringify(apiResponse)
         );
     } 
     
+    // TODO
     else if (payloadType === FILE) {
         const file: any = payload.formData.get("uploadedFile");
-        const apiResponse: string = await execApiHandler(file);
+        //const apiResponse: string = await apiScanFile(file);
 
         response.send(
-            JSON.stringify(apiResponse)
+            //JSON.stringify(apiResponse)
         );
     } 
     

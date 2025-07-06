@@ -5,13 +5,13 @@ const DIR_NAME: string = import.meta.dirname;
 const PREVIOUS: string = "..";
 const BIN_DIR_NAME: string = "bin";
 const BIN_EXEC: string = "api_handler";   
+const binPath: string = path.join(DIR_NAME, PREVIOUS, BIN_DIR_NAME, BIN_EXEC); 
 
-async function execApiHandler(url: string): Promise<string> {
+async function apiScanUrl(url: string): Promise<string> {
     const result = new Promise<string>((resolve, reject) => {
-        const binPath: string = path.join(DIR_NAME, PREVIOUS, BIN_DIR_NAME, BIN_EXEC); 
+        const action: string = "scan";
         const apiKey: string | undefined = process.env.API_KEY;
-        const args: any = [url, apiKey]
-        console.log(url, apiKey);
+        const args: any = [action, url, apiKey]
 
         execFile(binPath, args, (error: any, stdout: any, stderr: any) => {
             if (error) reject(error);
@@ -22,4 +22,20 @@ async function execApiHandler(url: string): Promise<string> {
     return result;
 }
 
-export { execApiHandler }
+async function apiAnalyse(id: string): Promise<string> {
+    const result = new Promise<string>((resolve, reject) => {
+        const action: string = "analyses";
+        const apiKey: string | undefined = process.env.API_KEY;
+        const args: any = [action, id, process.env.API_KEY];
+        console.log(apiKey);
+        execFile(binPath, args, (error: any, stdout: any, stderr: any) => {
+            if (error) reject(error);
+            else resolve(stdout);
+        })
+
+    })
+
+    return result;
+}
+
+export { apiScanUrl, apiAnalyse }
