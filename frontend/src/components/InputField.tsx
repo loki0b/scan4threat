@@ -1,13 +1,36 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import { Search } from 'lucide-react'
+import { ApiKeyStore } from '@/stores/ApiKeyStore'
+import { FileTypeStore } from '@/stores/FileTypeStore'
 
-function InputField() {
+function InputField({hasButton}:{hasButton: boolean}) {
+  const { userFileType, updateFileType } = FileTypeStore()
+  const {apikey} = ApiKeyStore()
+
+  const [inputValue, setInputValue] = useState('')
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+      updateFileType(null)
+      
+      const myUrl = e.target.value
+      setInputValue(myUrl)
+      if (myUrl.trim().length > 0) {
+        updateFileType(myUrl)
+      } else {
+        updateFileType(null)
+      }
+    }
   return (
-    <div className='bg-neutral-950 flex flex-row w-200 overflow-hidden rounded-sm'>
-        <input type="text" placeholder='Url' className='h-8 text-sm w-200 rounded-sm p-2 bg-neutral-950 text-neutral-100'/>
-        <button className='bg-lime-400 w-10 h-8 flex justify-center items-center'>
+    <div className={`flex ${hasButton ? 'flex-row' : 'justify-center items-center'} overflow-hidden rounded-md w-200`}>
+        <input value={inputValue} onChange={handleInput} type="text" className={`${hasButton ? 'w-200' : 'w-130'} active:border-lime-600 px-2 rounded-md h-8 bg-neutral-950 text-neutral-300`} placeholder='Url'/>
+        {
+          hasButton && (
+            <button className='bg-lime-400 w-10 h-8 flex justify-center items-center'>
             <Search/>
-        </button>
+          </button>
+          )
+        }
     </div>
   )
 }

@@ -30,7 +30,7 @@ function LoadingBar({ onComplete, start }: { onComplete?: () => void, start: boo
     if (finished) {
       const delay = setTimeout(() => {
         onComplete?.()
-      }, 300) // Optional small delay
+      }, 300) 
       return () => clearTimeout(delay)
     }
   }, [finished, onComplete])
