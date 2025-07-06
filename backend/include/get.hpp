@@ -3,12 +3,13 @@
 
 #include "request.hpp"
 
-class requestGet : public Request {
+class Get : public Request {
 private:
+    std::string data;
 public:
-    requestGet();
-    ~requestGet();
-    Response request() override;
+    Get(std::string data, std::string apiKey);
+    ~Get();
+    Response init() override;
 };
 
 #endif

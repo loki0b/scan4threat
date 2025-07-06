@@ -6,16 +6,14 @@
 #define POST "POST"
 #define ACCEPT_APP_JSON "accept: application/json"
 
-class RequestPost : public Request {
+class Post : public Request {
 private:
     std::string body;
     std::string url;
-    struct curl_slist* headers;
 public:
-    RequestPost(std::string url, std::string body, std::string apiKey);
-    ~RequestPost();
-    void setHeader(std::string header);
-    Response request() override;
+    Post(std::string url, std::string body, std::string apiKey);
+    ~Post();
+    Response init() override;
 };
 
 #endif
