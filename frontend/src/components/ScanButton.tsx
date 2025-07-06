@@ -28,7 +28,7 @@ function ScanButton() {
 
     setLoading(true)
     updateLoadingBar(true)
-    const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) // 4 seconds
+    const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) 
 
 
     if (typeof userFileType === 'string') {
@@ -50,7 +50,6 @@ function ScanButton() {
         })
         const result = await response.json()
         updateResponse(result.message)
-        console.log(updateResponse)
         await minimumLoadingTime
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -68,7 +67,7 @@ function ScanButton() {
         const formData = new FormData()
         formData.append('myFile', userFileType)
 
-        const response = await fetch(`http://localhost:8000/api/scan`, {
+        const response = await fetch(`http://localhost:8000/scanFile`, {
             method: 'POST',
             body: formData,
         })
