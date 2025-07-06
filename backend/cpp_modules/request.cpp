@@ -2,8 +2,7 @@
 
 using std::string;
 
-Request::Request(string url, string apiKey) {
-    this->url = url;
+Request::Request(string apiKey) {
     this->apiKey = apiKey;
     this->handle = curl_easy_init();
 }
@@ -25,10 +24,6 @@ size_t Request::writeData(void* buffer, size_t size, size_t nmemb, void* userdat
 
 CURL* Request::getHandle() const {
     return handle;
-};
-
-string Request::getUrl() const {
-    return url;
 };
 
 Response Request::request() {
