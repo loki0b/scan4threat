@@ -73,6 +73,7 @@ function Home() {
     })
     const result = await response.json()
     setResponseMsg(result.message)
+    console.log(responseMsg)
     await minimumLoadingTime
   } catch (error: unknown) {
     if (error instanceof Error) {
