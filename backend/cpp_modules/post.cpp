@@ -1,14 +1,15 @@
 #include "post.hpp"
+#include <curl/curl.h>
+#include <curl/easy.h>
 
 using std::string;
 
-RequestPost::RequestPost(string url, string body, string apiKey) : Request(url, apiKey), body(body) {
+RequestPost::RequestPost(string url, string body, string apiKey) : Request(apiKey), body(body), url(url) {
     string key = "x-apikey: " + apiKey;
-    
+
     this->headers = nullptr;
-    this->headers = curl_slist_append(headers, "accept: application/json");
+    this->headers = curl_slist_append(headers, ACCEPT_APP_JSON);
     this->headers = curl_slist_append(headers, key.c_str());
-    this->headers = curl_slist_append(headers, "content-type: application/x-www-form-urlencoded");
 };
 
 RequestPost::~RequestPost() {
@@ -22,12 +23,11 @@ Response RequestPost::request() {
     
     handle = getHandle();
 
-    curl_easy_setopt(handle, CURLOPT_URL, getUrl().c_str());
+    curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, writeData);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
     
-
     //body = "data: value"
     string temp = "url=" + body;
     curl_easy_setopt(handle, CURLOPT_POSTFIELDS, temp.c_str());
@@ -37,3 +37,7 @@ Response RequestPost::request() {
     Response response(data);    
     return response;
 };
+
+void RequestPost::setHeader(string header) {
+    headers = curl_slist_append(headers, header.c_str());
+}

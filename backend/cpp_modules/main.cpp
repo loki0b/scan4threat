@@ -1,15 +1,28 @@
 #include <iostream>
 #include "curl.hpp"
-#include "post.hpp"
-#include "response.hpp"
+#include "scanUrl.hpp"
+#include "scanFile.hpp"
+
+using std::cout, std::endl;
 
 int main(int argc, char** argv) {
     Curl a;
     a.init();
-    RequestPost b("https://www.virustotal.com/api/v3/urls", argv[1], argv[2]);
     
-    Response c = b.request();
-    std::cout << c.getMessage() << std::endl;
+    if (argc == 3) {
+        ScanUrl scan;
+        cout << scan.scan(argv[1], argv[2]) << endl;
+    }
+
+    else if (argc == 4) {
+        ScanFile scan;
+        cout << scan.scan(argv[1], argv[2], argv[3]) << endl;
+    }
+
+    else {
+        cout << "Error" << endl;
+    }
+    
     a.cleanUp();
     return 0;
 }
