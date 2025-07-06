@@ -31,7 +31,9 @@ function TopBar() {
     <div className='flex gap-4'>
         <div className='flex flex-row justify-between px-24 items-center w-full h-16 bg-neutral-900'>
             <Image src={Logo} alt='logo' className='h-4 w-40 object-cover'/>
-        <InputField />
+        <InputField 
+        hasButton={true}
+        />
         <button onClick={handleOnClick} className='flex flex-row gap-2 justify-center items-center w-48 h-8 bg-lime-400 rounded-xs text-neutral-900'>
                  <KeyRound size={18}/>   
                  <p>Add your API key</p>
