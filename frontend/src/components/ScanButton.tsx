@@ -4,18 +4,17 @@ import { ApiKeyStore } from '@/stores/ApiKeyStore'
 import { FileTypeStore } from '@/stores/FileTypeStore'
 
 function ScanButton() {
-    const {apikey, updateLoadingBar} = ApiKeyStore()
+    const {apikey, updateLoadingBar, updateResponse} = ApiKeyStore()
     const { userFileType } = FileTypeStore()
 
     const [loading, setLoading] = useState(false)
-    const [responseMsg, setResponseMsg] = useState<string>('')
     const [error, setError] = useState<unknown | Error>(null)
     const [missingAPI, setMissingAPI] = useState<boolean>(true)
     
     useEffect(() => {
         if (!apikey) {
             setMissingAPI(true);
-            setResponseMsg('');
+            updateResponse('');
             setError(null);
         } else {
           setMissingAPI(false);
@@ -34,14 +33,15 @@ function ScanButton() {
 
     if (typeof userFileType === 'string') {
         try {
-        setResponseMsg('')
+        updateResponse('')
         setError(null)
 
         const url = {
         urlLink: userFileType,
-        }
+        type: 'url',
+    }
 
-        const response = await fetch(`http://localhost:8000/scanUrl`, {
+        const response = await fetch(`http://localhost:8000/api/scan`, {
         method: 'POST',
         headers: {
         "Content-Type": "application/json", 
@@ -49,8 +49,8 @@ function ScanButton() {
         body: JSON.stringify(url),
         })
         const result = await response.json()
-        setResponseMsg(result.message)
-        console.log(responseMsg)
+        updateResponse(result.message)
+        console.log(updateResponse)
         await minimumLoadingTime
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -68,12 +68,12 @@ function ScanButton() {
         const formData = new FormData()
         formData.append('myFile', userFileType)
 
-        const response = await fetch(`http://localhost:8000/scanFile`, {
+        const response = await fetch(`http://localhost:8000/api/scan`, {
             method: 'POST',
             body: formData,
         })
         const result = await response.json()
-        setResponseMsg(result.message)
+        updateResponse(result.message)
         await minimumLoadingTime
         } catch (error: unknown) {
         if (error instanceof Error) {

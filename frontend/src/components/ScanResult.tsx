@@ -1,9 +1,14 @@
 import React from 'react'
+import { ApiKeyStore } from '@/stores/ApiKeyStore'
 
 function ScanResult() {
-  return (
-    <div>ScanResult</div>
-  )
+    const {response} = ApiKeyStore()
+  
+    return (
+      <div>
+        
+      </div>
+    )
 }
 
 export default ScanResult
