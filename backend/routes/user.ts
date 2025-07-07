@@ -9,7 +9,10 @@ userRouter.post("/user", (req: Request, res: Response) => {
     const data: any = req.body;
     const apiKey: any = data.APIKey;
     process.env.API_KEY = apiKey;
-    console.log(process.env.API_KEY);
+
+    res.send({
+        status: "ok"
+    });
 });
 
 export default userRouter;
