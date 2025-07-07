@@ -1,76 +1,41 @@
 import React from 'react'
 import { ApiKeyStore } from '@/stores/ApiKeyStore'
+import { resultTypes } from '@/lib/scanResultTypes'
 
 function ScanResult() {
-    const {response, analisys, updateAnalisys} = ApiKeyStore()
+  const {responses, analysis, updateAnalysis} = ApiKeyStore()
 
-  const handleAnalisys = async () => {
-    if (response === '') {
+  const handleAnalysis = async () => {
+    if (responses === '') {
         return
     }
-
-    updateAnalisys('')
+    const analysisData = {
+      id: responses,
+    }
     
-    if (response === '200') {
-        try {
-        setResponseMsg('')
-        setError(null)
+    const response = await fetch('http://localhost:8000/api/analyses', {
+      method: 'POST',
+      headers: {
+      "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(analysisData)
+    })
+    const result = await response.json()
 
-        const url = {
-        urlLink: userFileType,
-        type: 'url',
+    if (result.results) {
+      updateAnalysis(result.results)
     }
-
-        const response = await fetch(`http://localhost:8000/api/scan`, {
-        method: 'POST',
-        headers: {
-        "Content-Type": "application/json", 
-        },
-        body: JSON.stringify(url),
-        })
-        const result = await response.json()
-        setResponseMsg(result.message)
-        console.log(responseMsg)
-        await minimumLoadingTime
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-        setError(error.message)
-        } else {
-        setError('An unknown error occurred')
-        }
-    } finally {
-        setLoading(false)
-        updateLoadingBar(false)
-    }
-    } else {
-        try {
-
-        const formData = new FormData()
-        formData.append('myFile', userFileType)
-
-        const response = await fetch(`http://localhost:8000/scanFile`, {
-            method: 'POST',
-            body: formData,
-        })
-        const result = await response.json()
-        setResponseMsg(result.message)
-        await minimumLoadingTime
-        } catch (error: unknown) {
-        if (error instanceof Error) {
-            setError(error.message)
-        } else {
-            setError('An unknown error occurred')
-        }
-        } finally {
-        setLoading(false)
-        updateLoadingBar(false)
-        }
-    }
-    }
-
+    
+  }
     return (
-      <div>
-
+      <div >
+        {
+          resultTypes.map((myId) => (
+            <div key={myId.id}>
+              <p>{myId.title}</p>
+            </div>
+          ))
+        }
       </div>
     )
 }

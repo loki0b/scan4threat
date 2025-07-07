@@ -28,7 +28,6 @@ function ScanButton() {
     updateLoadingBar(true)
     const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) 
 
-
     if (typeof userFileType === 'string') {
         try {
         updateResponse('')
@@ -38,7 +37,6 @@ function ScanButton() {
         urlLink: userFileType,
         type: 'url',
     }
-
         const response = await fetch(`http://localhost:8000/api/scan`, {
         method: 'POST',
         headers: {
@@ -48,8 +46,11 @@ function ScanButton() {
         })
 
         const result = await response.json()
-        updateResponse(result)
         await minimumLoadingTime
+
+        if (result.data && result.data.id) {
+            updateResponse(result.data.id)
+        }
     } catch (error: unknown) {
         if (error instanceof Error) {
         setError(error.message)

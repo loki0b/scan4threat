@@ -11,10 +11,10 @@ function InputField({hasButton}:{hasButton: boolean}) {
   const [inputValue, setInputValue] = useState('')
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-      updateFileType(null)
-      
+
       const myUrl = e.target.value
       setInputValue(myUrl)
+      console.log(inputValue)
       if (myUrl.trim().length > 0) {
         updateFileType(myUrl)
       } else {
