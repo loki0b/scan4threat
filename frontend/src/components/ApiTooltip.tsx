@@ -24,7 +24,7 @@ function ApiTooltip() {
       const myAPIKEY = {
         APIKey: myKey
       }
-      const response = await fetch('http://localhost:8000/myKey',{
+      const response = await fetch('http://localhost:8000/api/user',{
         method: 'POST',
          headers: {
         "Content-Type": "application/json", 
