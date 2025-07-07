@@ -1,3 +1,4 @@
 ## Running backend
-You'll need the libcurl installed
+Dependencies: make, gcc/g++, npm, libcurl
+
 Run "npm start" to init the server.
