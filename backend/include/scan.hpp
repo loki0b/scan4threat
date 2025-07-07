@@ -9,6 +9,7 @@
 #define URL_URL "https://www.virustotal.com/api/v3/urls"
 #define CONTENT_TYPE_URL "content-type: application/x-www-form-urlencoded"
 
+// where the api_handler will give us the scan payload -> the id of entity scanned
 class Scan {
 public:
     Scan();

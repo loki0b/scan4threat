@@ -3,6 +3,7 @@
 
 #include <string>
 
+// response abstraction
 class Response {
 private:
     std::string response;
