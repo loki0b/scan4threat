@@ -10,10 +10,10 @@ import FileTypeButtons from '@/components/FileTypeButtons'
 import { FileTypeStore } from '@/stores/FileTypeStore'
 import InputField from '@/components/InputField'
 import ScanButton from '@/components/ScanButton'
-
+import ScanResult from '@/components/ScanResult'
 
 function Home() {
-  const {apikey, showLoadingBar, updateLoadingBar} = ApiKeyStore()
+  const {apikey, showLoadingBar, updateLoadingBar, analysis} = ApiKeyStore()
   const { fileTypes, updateFileType } = FileTypeStore()
   
   useEffect(() => {
@@ -42,16 +42,25 @@ function Home() {
           </div>
           )
           :
-          <div className='gap-2 flex flex-col justify-center items-center mt-4 bg-neutral-900 w-170 h-56 rounded-lg'>
+          <div className='mt-4 bg-neutral-900 w-170 h-56 rounded-lg'>
             {
-              fileTypes === 'File' ?
-              <FileSelector/>
+              analysis.trim().length > 0 ?
+              <ScanResult/>
               :
-              <InputField
-              hasButton={false}
-              />
+              <div className='gap-2 flex flex-col justify-center items-center mt-4'>
+                {
+                  fileTypes === 'File' ?
+                  <FileSelector/>
+                  :
+                  <div className='flex justify-center items-center mt-16 w-170'>
+                    <InputField
+                    hasButton={false}
+                    />
+                  </div>
+                }
+                <ScanButton/>
+              </div>
             }
-            <ScanButton/>
           </div>
         }
         <span className='text-sm text-lime-950 mt-16'>
