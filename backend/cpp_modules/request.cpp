@@ -11,7 +11,7 @@ Request::Request() {
 }
 
 Request::~Request() {
-     curl_slist_free_all(headers);
+    curl_slist_free_all(headers);
     curl_easy_cleanup(handle);    
 }
 
