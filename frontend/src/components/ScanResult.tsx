@@ -28,14 +28,18 @@ function ScanResult() {
     
   }
     return (
-      <div >
+      <div className='flex flex-col justify-center items-center'>
+        <p className='text-lime-600 text-2xl font-semibold mt-12'>Your file is {analysis}</p>
+        <div className='flex flex-row justify-between gap-3 p-8'>
         {
           resultTypes.map((myId) => (
-            <div key={myId.id}>
-              <p>{myId.title}</p>
+            <div key={myId.id} className={`flex gap-1 items-center text-sm`}>
+              <div className={`rounded-full h-2 w-2 ${analysis === myId.title ? 'bg-lime-600' : 'bg-neutral-950'}`}/>
+              <p className={`${analysis === myId.title ? 'text-lime-600' : 'text-neutral-950'}`}>{myId.title}</p>
             </div>
           ))
         }
+      </div>
       </div>
     )
 }
