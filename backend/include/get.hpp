@@ -3,6 +3,7 @@
 
 #include "request.hpp"
 
+// verb GET request
 class Get : public Request {
 private:
     std::string data;

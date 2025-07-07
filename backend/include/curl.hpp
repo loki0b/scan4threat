@@ -1,6 +1,7 @@
 #ifndef CURL_HPP
 #define CURL_HPP
 
+// encapsulating curl lib c
 class Curl {
 public:
     Curl();

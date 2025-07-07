@@ -5,6 +5,7 @@
 #include <curl/curl.h>
 #include "response.hpp"
 
+// request abstraction and curl handler
 class Request {
 private:
     CURL* handle;

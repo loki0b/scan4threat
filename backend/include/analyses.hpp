@@ -3,6 +3,7 @@
 
 #include <string>
 
+// Where the api_handler will give us the analyses payload of a entity
 class Analyses {
 public:
     Analyses();

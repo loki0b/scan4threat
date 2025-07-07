@@ -6,6 +6,7 @@
 #define POST "POST"
 #define ACCEPT_APP_JSON "accept: application/json"
 
+// verb POST request
 class Post : public Request {
 private:
     std::string body;
