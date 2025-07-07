@@ -7,7 +7,6 @@ function ScanButton() {
     const {apikey, updateLoadingBar, updateResponse} = ApiKeyStore()
     const { userFileType } = FileTypeStore()
 
-    const [loading, setLoading] = useState(false)
     const [error, setError] = useState<unknown | Error>(null)
     const [missingAPI, setMissingAPI] = useState<boolean>(true)
     
@@ -26,7 +25,6 @@ function ScanButton() {
         return
     }
 
-    setLoading(true)
     updateLoadingBar(true)
     const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) 
 
@@ -48,8 +46,9 @@ function ScanButton() {
         },
         body: JSON.stringify(url),
         })
+
         const result = await response.json()
-        updateResponse(result.message)
+        updateResponse(result)
         await minimumLoadingTime
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -58,16 +57,16 @@ function ScanButton() {
         setError('An unknown error occurred')
         }
     } finally {
-        setLoading(false)
         updateLoadingBar(false)
     }
     } else {
         try {
 
         const formData = new FormData()
-        formData.append('myFile', userFileType)
+        formData.append('uploadedFile', userFileType)  
+        formData.append('type', 'file') 
 
-        const response = await fetch(`http://localhost:8000/scanFile`, {
+        const response = await fetch(`http://localhost:8000/api/scan`, {
             method: 'POST',
             body: formData,
         })
@@ -81,7 +80,6 @@ function ScanButton() {
             setError('An unknown error occurred')
         }
         } finally {
-        setLoading(false)
         updateLoadingBar(false)
         }
     }
