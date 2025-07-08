@@ -15,7 +15,7 @@ scanRouter.post("/", async (request: Request, response: Response) => {
         const apiResponse: string = await apiScanUrl(url);
         
         response.send(
-            JSON.stringify(apiResponse)
+            JSON.parse(apiResponse)
         );
     } 
     
