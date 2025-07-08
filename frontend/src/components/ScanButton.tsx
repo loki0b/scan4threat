@@ -4,7 +4,7 @@ import { ApiKeyStore } from '@/stores/ApiKeyStore'
 import { FileTypeStore } from '@/stores/FileTypeStore'
 
 function ScanButton() {
-    const {apikey, updateLoadingBar, updateResponse} = ApiKeyStore()
+    const {apikey, updateLoadingBar, updateResponse, updateAnalysis, responses} = ApiKeyStore()
     const { userFileType } = FileTypeStore()
 
     const [error, setError] = useState<unknown | Error>(null)
@@ -20,71 +20,133 @@ function ScanButton() {
         }
       }, [apikey])
 
-    const handleScan = async () => {
-    if (!userFileType) {
-        return
-    }
+    
+  const handleScan = async () => {
+    if (!userFileType) return
 
     updateLoadingBar(true)
-    const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) 
+    const minimumLoadingTime = new Promise(resolve => setTimeout(resolve, 4000))
 
     if (typeof userFileType === 'string') {
-        try {
+      try {
         updateResponse('')
         setError(null)
 
-        const url = {
-        urlLink: userFileType,
-        type: 'url',
-    }
+        const urlPayload = {
+          urlLink: userFileType,
+          type: 'url',
+        }
+
         const response = await fetch(`http://localhost:8000/api/scan`, {
-        method: 'POST',
-        headers: {
-        "Content-Type": "application/json", 
-        },
-        body: JSON.stringify(url),
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(urlPayload),
         })
 
-        const result = await response.json()
-        await minimumLoadingTime
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+        }
 
-        if (result.data && result.data.id) {
-            updateResponse(result.data.id)
+        let result = await response.json();
+
+        if (typeof result === 'string') {
+            try {
+                result = JSON.parse(result);
+            } catch (parseError) {
+                throw new Error('Could not parse backend response as valid JSON object.');
+            }
         }
-    } catch (error: unknown) {
+
+        await minimumLoadingTime;
+
+        const urls = result.data;
+        if (!urls || typeof urls.id === 'undefined') {
+            throw new Error('Could not extract ID from scan response.');
+        }
+        const id = urls.id;
+
+        updateResponse(id);
+
+        const pollAnalysis = async (analysisId: string): Promise<any> => {
+          while (true) {
+            const analysisResponse = await fetch('http://localhost:8000/api/analyses', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: analysisId }),
+            });
+
+            if (!analysisResponse.ok) {
+              const errorText = await analysisResponse.text();
+              throw new Error(`Analysis API Error: ${analysisResponse.status} - ${errorText}`);
+            }
+
+            const rawResponseText = await analysisResponse.text();
+
+            let analysisResult;
+            try {
+                const unescapedString = JSON.parse(rawResponseText); 
+                const parts = unescapedString.split('\n');
+                
+                let jsonPart = '';
+                if (parts.length > 1) {
+                    jsonPart = parts[1];
+                } else {
+                    jsonPart = unescapedString;
+                }
+
+                analysisResult = JSON.parse(jsonPart); 
+
+            } catch (parseError) {
+                throw new Error('Could not parse backend analysis response as valid JSON.');
+            }
+
+            const status = analysisResult.data?.attributes?.status;
+
+            if (status === 'completed') {
+              return analysisResult.data.attributes.stats;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+          }
+        };
+
+        const stats = await pollAnalysis(id);
+        updateAnalysis(stats);
+
+      } catch (error: unknown) {
         if (error instanceof Error) {
-        setError(error.message)
+          setError(error.message);
         } else {
-        setError('An unknown error occurred')
+          setError('Ocorreu um erro desconhecido');
         }
-    } finally {
-        updateLoadingBar(false)
-    }
+      } finally {
+        updateLoadingBar(false);
+      }
     } else {
         try {
+            const formData = new FormData()
+            formData.append('uploadedFile', userFileType)  
+            formData.append('type', 'file') 
 
-        const formData = new FormData()
-        formData.append('uploadedFile', userFileType)  
-        formData.append('type', 'file') 
-
-        const response = await fetch(`http://localhost:8000/api/scan`, {
-            method: 'POST',
-            body: formData,
-        })
-        const result = await response.json()
-        updateResponse(result.message)
-        await minimumLoadingTime
+            const response = await fetch(`http://localhost:8000/api/scan`, {
+                method: 'POST',
+                body: formData,
+            })
+            const result = await response.json()
+            updateResponse(result.message)
+            await minimumLoadingTime
         } catch (error: unknown) {
-        if (error instanceof Error) {
-            setError(error.message)
-        } else {
-            setError('An unknown error occurred')
-        }
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError('An unknown error occurred')
+            }
         } finally {
-        updateLoadingBar(false)
+            updateLoadingBar(false)
         }
     }
-    }
+  };
     
     return (
         <>
@@ -110,4 +172,4 @@ function ScanButton() {
     )
 }
 
-export default ScanButton
+export default ScanButton;

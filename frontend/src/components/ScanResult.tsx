@@ -1,47 +1,57 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ApiKeyStore } from '@/stores/ApiKeyStore'
-import { resultTypes } from '@/lib/scanResultTypes'
 
 function ScanResult() {
-  const {responses, analysis, updateAnalysis} = ApiKeyStore()
+  const { responses, analysis, updateAnalysis } = ApiKeyStore()
 
-  const handleAnalysis = async () => {
-    if (responses === '') {
-        return
-    }
-    const analysisData = {
-      id: responses,
-    }
-    
-    const response = await fetch('http://localhost:8000/api/analyses', {
-      method: 'POST',
-      headers: {
-      "Content-Type": "application/json", 
-      },
-      body: JSON.stringify(analysisData)
-    })
-    const result = await response.json()
+  useEffect(() => {
+    const handleAnalysis = async () => {
+      if (!responses) return
 
-    if (result.results) {
-      updateAnalysis(result.results)
-    }
-    
-  }
-    return (
-      <div className='flex flex-col justify-center items-center'>
-        <p className='text-lime-600 text-2xl font-semibold mt-12'>Your file is {analysis}</p>
-        <div className='flex flex-row justify-between gap-3 p-8'>
-        {
-          resultTypes.map((myId) => (
-            <div key={myId.id} className={`flex gap-1 items-center text-sm`}>
-              <div className={`rounded-full h-2 w-2 ${analysis === myId.title ? 'bg-lime-600' : 'bg-neutral-950'}`}/>
-              <p className={`${analysis === myId.title ? 'text-lime-600' : 'text-neutral-950'}`}>{myId.title}</p>
-            </div>
-          ))
+      const analysisData = { id: responses }
+
+      try {
+        const response = await fetch('http://localhost:8000/api/analyses', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(analysisData),
+        })
+
+        const result = await response.json()
+        if (result?.data?.attributes?.stats) {
+          updateAnalysis(result.data.attributes.stats)
         }
+      } catch (err) {
+        console.error('Error fetching analysis:', err)
+      }
+    }
+
+    handleAnalysis()
+  }, [responses, updateAnalysis])
+
+  if (!analysis || Object.keys(analysis).length === 0) {
+    return null
+  }
+
+  return (
+    <div className="flex flex-col justify-center items-center">
+      <h3 className="text-lime-600 text-2xl font-semibold mb-4">
+        Analysis Summary
+      </h3>
+
+      <div className="flex gap-3 text-sm w-170 justify-center items-center p-3">
+        {Object.entries(analysis).map(([key, value]) => (
+          <div key={key} className="flex justify-center items-center  gap-2 w-40">
+
+            <span className="capitalize text-lime-600">{key}:</span>
+            <span className="font-semibold text-lime-600">{value}</span>
+          </div>
+        ))}
       </div>
-      </div>
-    )
+    </div>
+  )
 }
 
 export default ScanResult
