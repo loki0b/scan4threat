@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import TopBar from '@/components/TopBar'
 import Image from 'next/image'
 import Logo from '@/assets/scan4threat.png'
@@ -15,13 +15,15 @@ import ScanResult from '@/components/ScanResult'
 function Home() {
   const {apikey, showLoadingBar, updateLoadingBar, analysis} = ApiKeyStore()
   const { fileTypes, updateFileType } = FileTypeStore()
-  
+
   useEffect(() => {
     if (!apikey) {
       updateLoadingBar(false);
       updateFileType(null);
     }
   }, [apikey])
+  console.log('Estado analysis:', analysis)
+
 
   return (
     <div>
@@ -32,40 +34,42 @@ function Home() {
         <FileTypeButtons/>
         {
           showLoadingBar ? (
-          <div className='flex flex-col justify-center items-center mt-4 bg-neutral-900 w-170 h-56 rounded-lg'>
-            <LoadingBar
-            start={true}
-            onComplete={() => {
-              updateLoadingBar(false)
-            }}
-          />
-          </div>
+            <div className='flex flex-col justify-center items-center mt-4 bg-neutral-900 w-170 h-56 rounded-lg'>
+              <LoadingBar
+                start={true}
+                onComplete={() => {
+                  updateLoadingBar(false)
+                }}
+              />
+            </div>
           )
           :
           <div className='mt-4 bg-neutral-900 w-170 h-56 rounded-lg'>
-            {
-              analysis.trim().length > 0 ?
-              <ScanResult/>
-              :
               <div className='gap-2 flex flex-col justify-center items-center mt-4'>
                 {
-                  fileTypes === 'File' ?
-                  <FileSelector/>
-                  :
-                  <div className='flex justify-center items-center mt-16 w-170'>
+                  fileTypes === 'Url' ?
+                  <div className='flex flex-col gap-2 justify-center items-center mt-16 w-170'>
                     <InputField
-                    hasButton={false}
+                      hasButton={false}
                     />
+                    <ScanButton/>
+                  </div>
+                  :
+                  <div className='flex justify-center items-center mt-8 w-170'>
+                    {
+                      analysis ?
+                      <ScanResult/>
+                      :
+                      <span>Scan an Url to see the result.</span>
+                    }
                   </div>
                 }
-                <ScanButton/>
               </div>
-            }
           </div>
         }
         <span className='text-sm text-lime-950 mt-16'>
-        @2025 | Made by: Loki0b & EnnalyC
-      </span>
+          @2025 | Made by: Loki0b & EnnalyC
+        </span>
       </div>    
     </div>
   )
