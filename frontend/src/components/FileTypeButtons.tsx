@@ -6,8 +6,8 @@ function FileTypeButtons() {
     const { fileTypes, defineFileType } = FileTypeStore()
 
     const myButtons = [
-        {id: 1, title: "File"},
-        {id: 2, title: "Url"}
+        {id: 1, title: "Url"},
+        {id: 2, title: "Results"}
       ]
     const [clickedButton, setClickedButton] = useState(1)
     

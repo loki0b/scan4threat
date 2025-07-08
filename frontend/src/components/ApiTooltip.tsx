@@ -30,8 +30,9 @@ function ApiTooltip() {
         "Content-Type": "application/json", 
         },
         body: JSON.stringify(myAPIKEY)
-      })
-      const result = await response.json()
+      }) 
+      
+    const result = await response.json()
     } catch (error: unknown) {
     if (error instanceof Error) {
       setError(error.message)
