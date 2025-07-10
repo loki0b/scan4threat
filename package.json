@@ -1,0 +1,24 @@
+{
+  "name": "scan4threat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently  \"npm --prefix backend run dev\"  \"npm --prefix frontend run dev\"",
+    "installfb": "npm --prefix backend install && && npm --prefix frontend install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loki0b/scan4threat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loki0b/scan4threat/issues"
+  },
+  "homepage": "https://github.com/loki0b/scan4threat#readme",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
