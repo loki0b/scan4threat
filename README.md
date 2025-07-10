@@ -1,2 +1,2 @@
 ## How to run?
-run "npm install", "npm run install fb" and then "npm start"
+run "npm install", "npm run installfb" and then "npm start"
