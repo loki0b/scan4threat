@@ -1,9 +1,4 @@
 node_modules/
-<<<<<<< HEAD
 bin/
-=======
-.env
-.dev.env
->>>>>>> back
 compile_commands.json
 .cache

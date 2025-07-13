@@ -2,12 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "scripts": {
-<<<<<<< HEAD
     "dev": "tsx --env-file=.development.env --watch  app/server.ts"
-=======
-    "dev": "tsx --env-file=.env.development --watch  app/server.ts",
-    "start": "npm install && make && tsx --env-file=.env.development --watch app/server.ts"
->>>>>>> back
   },
   "type": "module",
   "keywords": [],
