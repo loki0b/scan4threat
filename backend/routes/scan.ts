@@ -1,20 +1,39 @@
 import { Request, Response, Router } from "express";
-import { execApiHandler } from "../app/apiHandlerCpp";
+import { apiScanUrl } from "../app/apiHandlerCpp";
 
+const URL = "url";
+const FILE = "file";
 
 const scanRouter = Router();
 
-scanRouter.post("/scanUrl", (req: Request, res: Response) => {
-    const urlLink: string = req.body.urlLink;
+scanRouter.post("/", async (request: Request, response: Response) => {
+    const payload: any = request.body;
+    const payloadType = payload.type;
     
-    const apiResponse: string = execApiHandler(urlLink);
-    res.send(
-        JSON.stringify(apiResponse)
-    );
-})
+    if (payloadType === URL) {
+        const url: string = payload.urlLink;
+        const apiResponse: string = await apiScanUrl(url);
+        
+        response.send(
+            JSON.parse(apiResponse)
+        );
+    } 
+    
+    // TODO
+    else if (payloadType === FILE) {
+        const file: any = payload.formData.get("uploadedFile");
+        //const apiResponse: string = await apiScanFile(file);
 
-scanRouter.post("/scanFile", (req: Request, res: Response) => {
-    res.send("oi");
-})
+        response.send(
+            //JSON.stringify(apiResponse)
+        );
+    } 
+    
+    else {
+        response.send({
+            error: "unknown type"
+        });
+    }
+});
 
 export default scanRouter;

@@ -1,14 +1,17 @@
 #include "request.hpp"
+#include "response.hpp"
+#include <cstddef>
+#include <curl/curl.h>
 
 using std::string;
 
-Request::Request(string url, string apiKey) {
-    this->url = url;
-    this->apiKey = apiKey;
+Request::Request() {
     this->handle = curl_easy_init();
+    headers = nullptr;
 }
 
 Request::~Request() {
+    curl_slist_free_all(headers);
     curl_easy_cleanup(handle);    
 }
 
@@ -27,15 +30,14 @@ CURL* Request::getHandle() const {
     return handle;
 };
 
-string Request::getUrl() const {
-    return url;
+Response Request::init() {
+    return Response("");
 };
 
-Response Request::request() {
-    Response a("a");
-    return a;
-};
+struct curl_slist* Request::getHeader() const {
+    return headers;
+}
 
-string Request::getApikey() const {
-    return apiKey;
+void Request::setHeader(string header) {
+    headers = curl_slist_append(headers, header.c_str());
 }

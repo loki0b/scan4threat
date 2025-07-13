@@ -1,38 +1,51 @@
-#include "post.hpp"
 #include <curl/curl.h>
-#include <curl/easy.h>
+#include "get.hpp"
+#include "post.hpp"
+#include "request.hpp"
+#include <iostream>
+
+#define URL "https://www.virustotal.com/api/v3/analyses/"
 
 using std::string;
 
-Post::Post(string url, string body, string apiKey) : Request(), body(body), url(url) {
+Get::Get(string data, string apiKey): Request(), data(data) {
     string key = "x-apikey: " + apiKey;
 
     setHeader(ACCEPT_APP_JSON);
     setHeader(key.c_str());
-};
+}
 
-Post::~Post() {
-   ;
-};
+Get::~Get() {
 
-Response Post::init() {
+}
+
+Response Get::init() {
     CURL* handle;
     CURLcode retCode;
     string data;
-    
+    string url = URL + this->data;
+    std::cout << url << std::endl;
+
     handle = getHandle();
 
     curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
     curl_easy_setopt(handle, CURLOPT_HTTPHEADER, getHeader());
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, writeData);
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &data);
-    
-    //body = "data: value"
-    string temp = "url=" + body;
-    curl_easy_setopt(handle, CURLOPT_POSTFIELDS, temp.c_str());
 
     retCode = curl_easy_perform(handle);
 
     Response response(data);    
     return response;
-};
+}
+
+CURL *hnd = curl_easy_init();
+
+//curl_easy_setopt(hnd, CURLOPT_CUSTOMREQUEST, "GET");
+
+
+
+
+
+
+CURLcode ret = curl_easy_perform(hnd);

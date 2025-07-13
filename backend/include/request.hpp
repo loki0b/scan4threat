@@ -5,20 +5,20 @@
 #include <curl/curl.h>
 #include "response.hpp"
 
+// request abstraction and curl handler
 class Request {
 private:
     CURL* handle;
-    std::string url;
-    std::string apiKey;
+    struct curl_slist* headers;
 protected:
     static size_t writeData(void* buffer, size_t size, size_t nmemb, void* userdata);
 public:
-    Request(std::string url, std::string apiKey);
+    Request();
     virtual ~Request();
-    virtual Response request();
+    virtual Response init();
     CURL* getHandle() const;
-    std::string getUrl() const;
-    std::string getApikey() const;
+    struct curl_slist* getHeader() const; 
+    void setHeader(std::string header);
 };
 
 #endif

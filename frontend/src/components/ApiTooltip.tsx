@@ -24,14 +24,15 @@ function ApiTooltip() {
       const myAPIKEY = {
         APIKey: myKey
       }
-      const response = await fetch('http://localhost:8000/myKey',{
+      const response = await fetch('http://localhost:8000/api/user',{
         method: 'POST',
          headers: {
         "Content-Type": "application/json", 
         },
         body: JSON.stringify(myAPIKEY)
-      })
-      const result = await response.json()
+      }) 
+      
+    const result = await response.json()
     } catch (error: unknown) {
     if (error instanceof Error) {
       setError(error.message)

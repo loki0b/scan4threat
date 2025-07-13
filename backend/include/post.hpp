@@ -4,15 +4,17 @@
 #include "request.hpp"
 
 #define POST "POST"
+#define ACCEPT_APP_JSON "accept: application/json"
 
-class RequestPost : public Request {
+// verb POST request
+class Post : public Request {
 private:
     std::string body;
-    struct curl_slist *headers;
+    std::string url;
 public:
-    RequestPost(std::string url, std::string body, std::string apiKey);
-    ~RequestPost();
-    Response request() override;
+    Post(std::string url, std::string body, std::string apiKey);
+    ~Post();
+    Response init() override;
 };
 
 #endif
